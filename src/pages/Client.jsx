@@ -133,7 +133,7 @@ const styles = `
   }
 
   .gift-price {
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 400;
   color: var(--warm-brown);
   margin-top: 4px;
@@ -164,7 +164,7 @@ const styles = `
 
   .gift-name {
     font-family: 'Jost', sans-serif;
-    font-size: 12px;
+    font-size: 14px;
     font-weight: 400;
     color: var(--deep);
     line-height: 1.3;
