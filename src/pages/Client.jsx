@@ -404,7 +404,7 @@ const GIFT_ICONS = {
   almofada: '🛋️', vaso: '🌺', quadro: '🖼️', tapete: '🏠',
   ventilador: '🌀', liquidificador: '⚡', cafeteira: '☕',
   ferro: '👕', batedeira: '🥣', espelho: '🪞',
-  tv: '📺', micro: '📡', ar: '❄️', geladeira: '🧊',
+  tv: '📺', micro: '📡', ar: '❄️', geladeira: '🧊',furadeira:'🛠️',mixer:'🥛'
 }
 
 function getIcon(name = '') {
