@@ -152,7 +152,6 @@ const styles = `
     font-weight: 300;
     color: var(--deep);
   }
-
   .admin-logo em { font-style: italic; color: var(--warm-brown); }
 
   .admin-badge {
@@ -184,7 +183,6 @@ const styles = `
     padding: 2rem 1.5rem 3rem;
   }
 
-  /* Stats row */
   .stats-row {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -223,7 +221,6 @@ const styles = `
     margin-top: 4px;
   }
 
-  /* Two column layout */
   .admin-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -259,7 +256,6 @@ const styles = `
     color: var(--taupe);
   }
 
-  /* Add gift form */
   .add-gift-form {
     padding: 1rem 1.25rem;
     border-bottom: 1px solid var(--sand);
@@ -300,17 +296,20 @@ const styles = `
   .add-btn:hover { background: var(--warm-brown); }
   .add-btn:disabled { background: var(--taupe); cursor: not-allowed; }
 
-  /* Gift rows */
+  /* ── Gift row normal ── */
   .gift-row {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0.75rem 1.25rem;
     border-bottom: 1px solid var(--cream);
     transition: background 0.1s;
   }
   .gift-row:last-child { border-bottom: none; }
   .gift-row:hover { background: var(--cream); }
+
+  .gift-row-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.75rem 1.25rem;
+  }
 
   .gift-row-left {
     display: flex;
@@ -326,6 +325,12 @@ const styles = `
     color: var(--deep);
   }
 
+  .gift-row-price {
+    font-size: 11px;
+    color: var(--warm-brown);
+    margin-top: 1px;
+  }
+
   .gift-status {
     font-size: 10px;
     font-weight: 400;
@@ -333,19 +338,11 @@ const styles = `
     padding: 3px 8px;
     border-radius: 20px;
   }
+  .gift-status.chosen  { background: var(--green-light); color: var(--green); }
+  .gift-status.available { background: var(--sand); color: var(--taupe); }
 
-  .gift-status.chosen {
-    background: var(--green-light);
-    color: var(--green);
-  }
-
-  .gift-status.available {
-    background: var(--sand);
-    color: var(--taupe);
-  }
-
-  .row-delete-btn {
-    width: 24px; height: 24px;
+  .icon-btn {
+    width: 26px; height: 26px;
     background: none;
     border: 1px solid var(--sand);
     border-radius: 50%;
@@ -355,11 +352,113 @@ const styles = `
     display: flex; align-items: center; justify-content: center;
     transition: all 0.15s;
     flex-shrink: 0;
-    margin-left: 8px;
+    line-height: 1;
   }
-  .row-delete-btn:hover { border-color: var(--red); color: var(--red); background: var(--red-light); }
+  .icon-btn:hover { border-color: var(--warm-brown); color: var(--warm-brown); background: var(--cream); }
+  .icon-btn.danger:hover { border-color: var(--red); color: var(--red); background: var(--red-light); }
+  .icon-btn.save:hover   { border-color: var(--green); color: var(--green); background: var(--green-light); }
 
-  /* Gifter rows */
+  /* ── Edit row (expanded) ── */
+  .edit-row {
+    padding: 0.75rem 1.25rem 1rem;
+    border-top: 1px dashed var(--sand);
+    background: var(--cream);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .edit-row-fields {
+    display: flex;
+    gap: 8px;
+  }
+
+  .edit-input {
+    background: white;
+    border: 1px solid var(--sand);
+    border-radius: 1px;
+    padding: 7px 10px;
+    font-family: 'Jost', sans-serif;
+    font-size: 13px;
+    font-weight: 300;
+    color: var(--deep);
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .edit-input:focus { border-color: var(--taupe); }
+  .edit-input::placeholder { color: var(--taupe); }
+  .edit-input.name  { flex: 1; }
+  .edit-input.price { width: 110px; }
+
+  .edit-row-bottom {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .chosen-toggle {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    font-size: 12px;
+    color: var(--warm-brown);
+    user-select: none;
+  }
+
+  .toggle-track {
+    width: 34px;
+    height: 18px;
+    border-radius: 9px;
+    background: var(--sand);
+    position: relative;
+    transition: background 0.2s;
+    flex-shrink: 0;
+  }
+  .toggle-track.on { background: var(--green); }
+
+  .toggle-thumb {
+    position: absolute;
+    top: 2px; left: 2px;
+    width: 14px; height: 14px;
+    border-radius: 50%;
+    background: white;
+    transition: left 0.2s;
+  }
+  .toggle-track.on .toggle-thumb { left: 18px; }
+
+  .edit-actions {
+    display: flex;
+    gap: 6px;
+  }
+
+  .edit-btn {
+    padding: 6px 14px;
+    border-radius: 1px;
+    font-family: 'Jost', sans-serif;
+    font-size: 11px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s;
+    border: 1px solid var(--sand);
+  }
+
+  .edit-btn.cancel {
+    background: transparent;
+    color: var(--taupe);
+  }
+  .edit-btn.cancel:hover { background: var(--sand); color: var(--deep); }
+
+  .edit-btn.save {
+    background: var(--deep);
+    color: var(--cream);
+    border-color: var(--deep);
+  }
+  .edit-btn.save:hover { background: var(--warm-brown); border-color: var(--warm-brown); }
+  .edit-btn.save:disabled { background: var(--taupe); border-color: var(--taupe); cursor: not-allowed; }
+
+  /* ── Gifter rows ── */
   .gifter-row {
     display: flex;
     align-items: center;
@@ -411,15 +510,6 @@ const styles = `
     font-style: italic;
   }
 
-  .section-label {
-    font-size: 10px;
-    font-weight: 500;
-    letter-spacing: 3px;
-    text-transform: uppercase;
-    color: var(--taupe);
-    margin-bottom: 1rem;
-  }
-
   .loading-dots { display: inline-flex; gap: 3px; align-items: center; }
   .loading-dots span {
     width: 5px; height: 5px;
@@ -459,6 +549,8 @@ const styles = `
     .admin-grid { grid-template-columns: 1fr; }
     .stats-row { grid-template-columns: 1fr 1fr; }
     .stats-row .stat-card:last-child { grid-column: 1/-1; }
+    .edit-row-fields { flex-wrap: wrap; }
+    .edit-input.price { width: 100%; }
   }
 `
 
@@ -468,7 +560,7 @@ const GIFT_ICONS = {
   almofada: '🛋️', vaso: '🌺', quadro: '🖼️', tapete: '🏠',
   ventilador: '🌀', liquidificador: '⚡', cafeteira: '☕',
   ferro: '👕', batedeira: '🥣', espelho: '🪞',
-  tv: '📺', micro: '📡', ar: '❄️', geladeira: '🧊',
+  tv: '📺', micro: '📡', ar: '❄️', geladeira: '🧊', furadeira: '🛠️', mixer: '🥛'
 }
 
 function getIcon(name = '') {
@@ -498,16 +590,12 @@ function LoginScreen({ onLogin }) {
     }
   }
 
-  function handleKey(e) {
-    if (e.key === 'Enter') handleLogin()
-  }
-
   return (
     <div className="login-wrap">
       <div className="login-card">
         <p className="login-eyebrow">Área Restrita</p>
         <h1 className="login-title">Painel dos Noivos</h1>
-        <p className="login-sub">Gabi &amp; Ekel</p>
+        <p className="login-sub">Gabi &amp; Kel</p>
 
         <div className="login-divider">
           <div className="login-divider-line" />
@@ -523,7 +611,7 @@ function LoginScreen({ onLogin }) {
             placeholder="gakel"
             value={username}
             onChange={e => { setUsername(e.target.value); setError('') }}
-            onKeyDown={handleKey}
+            onKeyDown={e => e.key === 'Enter' && handleLogin()}
             autoComplete="username"
           />
         </div>
@@ -536,17 +624,136 @@ function LoginScreen({ onLogin }) {
             placeholder="••••••••"
             value={password}
             onChange={e => { setPassword(e.target.value); setError('') }}
-            onKeyDown={handleKey}
+            onKeyDown={e => e.key === 'Enter' && handleLogin()}
             autoComplete="current-password"
           />
         </div>
 
         {error && <p className="login-error">{error}</p>}
 
-        <button className="primary-btn" onClick={handleLogin}>
-          Entrar
-        </button>
+        <button className="primary-btn" onClick={handleLogin}>Entrar</button>
       </div>
+    </div>
+  )
+}
+
+// ── GIFT ROW COM EDIÇÃO ───────────────────────────────────────────────────────
+
+function GiftRow({ gift, onSave, onDelete }) {
+  const [editing, setEditing] = useState(false)
+  const [editName, setEditName] = useState(gift.giftname)
+  const [editPrice, setEditPrice] = useState(gift.price ?? '')
+  const [editChosen, setEditChosen] = useState(gift.chosen)
+  const [saving, setSaving] = useState(false)
+
+  function openEdit() {
+    setEditName(gift.giftname)
+    setEditPrice(gift.price ?? '')
+    setEditChosen(gift.chosen)
+    setEditing(true)
+  }
+
+  async function handleSave() {
+    if (!editName.trim() || saving) return
+    setSaving(true)
+    await onSave(gift.id, {
+      giftname: editName.trim(),
+      price: editPrice !== '' ? Number(editPrice) : null,
+      chosen: editChosen
+    })
+    setSaving(false)
+    setEditing(false)
+  }
+
+  return (
+    <div className="gift-row">
+      <div className="gift-row-inner">
+        <div className="gift-row-left">
+          <span className="gift-row-icon">{getIcon(editing ? editName : gift.giftname)}</span>
+          <div>
+            <div className="gift-row-name">{gift.giftname}</div>
+            {gift.price && (
+              <div className="gift-row-price">
+                {Number(gift.price).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+              </div>
+            )}
+          </div>
+        </div>
+
+        <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+          <span className={`gift-status ${gift.chosen ? 'chosen' : 'available'}`}>
+            {gift.chosen ? 'escolhido' : 'livre'}
+          </span>
+
+          {/* Botão editar */}
+          <button
+            className="icon-btn"
+            onClick={() => editing ? setEditing(false) : openEdit()}
+            title="Editar"
+          >
+            {editing ? '✕' : '✎'}
+          </button>
+
+          {/* Botão deletar — só se não estiver escolhido */}
+          {!gift.chosen && (
+            <button
+              className="icon-btn danger"
+              onClick={() => onDelete(gift.id)}
+              title="Remover"
+            >
+              ×
+            </button>
+          )}
+        </div>
+      </div>
+
+      {/* Painel de edição expandido */}
+      {editing && (
+        <div className="edit-row">
+          <div className="edit-row-fields">
+            <input
+              className="edit-input name"
+              type="text"
+              placeholder="Nome do presente"
+              value={editName}
+              onChange={e => setEditName(e.target.value)}
+              onKeyDown={e => e.key === 'Enter' && handleSave()}
+              autoFocus
+            />
+            <input
+              className="edit-input price"
+              type="number"
+              placeholder="Preço (R$)"
+              value={editPrice}
+              onChange={e => setEditPrice(e.target.value)}
+              onKeyDown={e => e.key === 'Enter' && handleSave()}
+            />
+          </div>
+
+          <div className="edit-row-bottom">
+            {/* Toggle chosen */}
+            <label className="chosen-toggle" onClick={() => setEditChosen(v => !v)}>
+              <div className={`toggle-track ${editChosen ? 'on' : ''}`}>
+                <div className="toggle-thumb" />
+              </div>
+              {editChosen ? 'Marcado como escolhido' : 'Marcar como escolhido'}
+            </label>
+
+            <div className="edit-actions">
+              <button className="edit-btn cancel" onClick={() => setEditing(false)}>
+                Cancelar
+              </button>
+              <button
+                className="edit-btn save"
+                onClick={handleSave}
+                disabled={saving || !editName.trim()}
+              >
+                {saving ? '...' : 'Salvar'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
@@ -558,29 +765,30 @@ function AdminPanel({ onLogout }) {
   const [users, setUsers] = useState([])
   const [loading, setLoading] = useState(true)
   const [newGift, setNewGift] = useState('')
+  const [newPrice, setNewPrice] = useState('')
   const [adding, setAdding] = useState(false)
   const [toast, setToast] = useState({ visible: false, message: '' })
-  const [newPrice, setNewPrice] = useState('')
+
+  useEffect(() => { document.title = 'Admin Casamento' }, [])
 
   function showToast(message) {
     setToast({ visible: true, message })
     setTimeout(() => setToast({ visible: false, message: '' }), 2800)
   }
 
-  useEffect(() => {
-    document.title = "Admin Casamento";
-  }, []);
+ async function fetchAll() {
+  try {
+    const [gRes, uRes] = await Promise.all([
+      fetch(`${API}/gifts`),
+      fetch(`${API}/users`),
+    ])
+    const gData = await gRes.json()
+    const uData = await uRes.json()
 
-  async function fetchAll() {
-    try {
-      const [gRes, uRes] = await Promise.all([
-        fetch(`${API}/gifts`),
-        fetch(`${API}/users`),
-      ])
-      setGifts(await gRes.json() || [])
-      setUsers(await uRes.json() || [])
-    } catch (e) { console.error(e) }
-  }
+    setGifts(Array.isArray(gData) ? gData : gData.rows ?? [])
+    setUsers(Array.isArray(uData) ? uData : uData.rows ?? [])
+  } catch (e) { console.error(e) }
+}
 
   useEffect(() => {
     fetchAll().finally(() => setLoading(false))
@@ -605,6 +813,25 @@ function AdminPanel({ onLogout }) {
     finally { setAdding(false) }
   }
 
+  async function saveGift(id, data) {
+    try {
+      const res = await fetch(`${API}/gifts/${id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      })
+      if (res.ok) {
+        await fetchAll()
+        showToast('Presente atualizado!')
+      } else {
+        showToast('Erro ao atualizar.')
+      }
+    } catch (e) {
+      console.error(e)
+      showToast('Erro ao atualizar.')
+    }
+  }
+
   async function deleteGift(id) {
     try {
       await fetch(`${API}/gifts/${id}`, { method: 'DELETE' })
@@ -615,7 +842,7 @@ function AdminPanel({ onLogout }) {
 
   async function deleteUser(id) {
     try {
-      const res = await fetch(`${API}/users/${id}`, { method: 'DELETE' })
+      const res = await fetch(`${API}/givers/${id}`, { method: 'DELETE' })
       if (res.ok || res.status === 204) {
         await fetchAll()
         showToast('Convidado removido')
@@ -630,15 +857,13 @@ function AdminPanel({ onLogout }) {
     <>
       <header className="admin-header">
         <div>
-          <div className="admin-logo">Gabi <em>&amp;</em> Ekel</div>
+          <div className="admin-logo">Gabi <em>&amp;</em> Kel</div>
           <div className="admin-badge">Painel Admin</div>
         </div>
         <button className="logout-btn" onClick={onLogout}>Sair</button>
       </header>
 
       <main className="admin-main">
-
-        {/* Stats */}
         <div className="stats-row">
           <div className="stat-card">
             <div className="stat-label">Presentes escolhidos</div>
@@ -663,7 +888,6 @@ function AdminPanel({ onLogout }) {
           </div>
         ) : (
           <div className="admin-grid">
-
             {/* Gifts panel */}
             <div className="panel">
               <div className="panel-header">
@@ -671,54 +895,39 @@ function AdminPanel({ onLogout }) {
                 <span className="panel-count">{gifts.length} itens</span>
               </div>
 
-             <div className="add-gift-form">
-  <input
-    className="add-gift-input"
-    type="text"
-    placeholder="Nome do presente..."
-    value={newGift}
-    onChange={e => setNewGift(e.target.value)}
-    onKeyDown={e => e.key === 'Enter' && addGift()}
-  />
-  <input
-    className="add-gift-input"
-    type="number"
-    placeholder="Preço (R$)"
-    value={newPrice}
-    onChange={e => setNewPrice(e.target.value)}
-    onKeyDown={e => e.key === 'Enter' && addGift()}
-    style={{ maxWidth: 110 }}
-  />
-  <button className="add-btn" onClick={addGift} disabled={adding || !newGift.trim()}>
-    {adding ? '...' : 'Adicionar'}
-  </button>
-</div>
+              <div className="add-gift-form">
+                <input
+                  className="add-gift-input"
+                  type="text"
+                  placeholder="Nome do presente..."
+                  value={newGift}
+                  onChange={e => setNewGift(e.target.value)}
+                  onKeyDown={e => e.key === 'Enter' && addGift()}
+                />
+                <input
+                  className="add-gift-input"
+                  type="number"
+                  placeholder="Preço (R$)"
+                  value={newPrice}
+                  onChange={e => setNewPrice(e.target.value)}
+                  onKeyDown={e => e.key === 'Enter' && addGift()}
+                  style={{ maxWidth: 110 }}
+                />
+                <button className="add-btn" onClick={addGift} disabled={adding || !newGift.trim()}>
+                  {adding ? '...' : 'Adicionar'}
+                </button>
+              </div>
 
               {gifts.length === 0 ? (
                 <div className="empty-state">Nenhum presente cadastrado ainda</div>
               ) : gifts.map(g => (
-  <div className="gift-row" key={g.id}>
-    <div className="gift-row-left">
-      <span className="gift-row-icon">{getIcon(g.giftname)}</span>
-      <div>
-        <span className="gift-row-name">{g.giftname}</span>
-        {g.price && (
-          <div style={{ fontSize: 11, color: 'var(--warm-brown)', marginTop: 1 }}>
-            {Number(g.price).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
-          </div>
-        )}
-      </div>
-    </div>
-    <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-      <span className={`gift-status ${g.chosen ? 'chosen' : 'available'}`}>
-        {g.chosen ? 'escolhido' : 'livre'}
-      </span>
-      {!g.chosen && (
-        <button className="row-delete-btn" onClick={() => deleteGift(g.id)} title="Remover">×</button>
-      )}
-    </div>
-  </div>
-))}
+                <GiftRow
+                  key={g.id}
+                  gift={g}
+                  onSave={saveGift}
+                  onDelete={deleteGift}
+                />
+              ))}
             </div>
 
             {/* Gifters panel */}
@@ -740,13 +949,12 @@ function AdminPanel({ onLogout }) {
                     </div>
                     <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                       <span className="gifter-gift-tag" title={giftName}>{giftName}</span>
-                      <button className="row-delete-btn" onClick={() => deleteUser(u.id)} title="Remover">×</button>
+                      <button className="icon-btn danger" onClick={() => deleteUser(u.id)} title="Remover">×</button>
                     </div>
                   </div>
                 )
               })}
             </div>
-
           </div>
         )}
       </main>

@@ -1,6 +1,46 @@
 import { useState, useEffect } from 'react'
+import QRCode from 'qrcode'
 
 const API = 'https://api-gabiekel.up.railway.app'
+
+const PIX_CHAVE = '19993723677'
+const PIX_NOME = 'Kelwin'
+
+// ── Pix BR Code (EMV) ──────────────────────────────────────────
+function crc16(str) {
+  let crc = 0xFFFF
+  for (let i = 0; i < str.length; i++) {
+    crc ^= str.charCodeAt(i) << 8
+    for (let j = 0; j < 8; j++) {
+      crc = (crc & 0x8000) ? (crc << 1) ^ 0x1021 : crc << 1
+    }
+  }
+  return ((crc & 0xFFFF).toString(16).toUpperCase()).padStart(4, '0')
+}
+
+function pad(id, value) {
+  return id + value.length.toString().padStart(2, '0') + value
+}
+
+function buildPixPayload(chave, nome, valor) {
+  const merchantAccountInfo = pad('00', 'BR.GOV.BCB.PIX') + pad('01', chave)
+  const merchantAccount = pad('26', merchantAccountInfo)
+  const valorStr = Number(valor).toFixed(2)
+  const additionalData = pad('62', pad('05', '***'))
+  let payload =
+    pad('00', '01') +
+    merchantAccount +
+    pad('52', '0000') +
+    pad('53', '986') +
+    pad('54', valorStr) +
+    pad('58', 'BR') +
+    pad('59', nome.substring(0, 25)) +
+    pad('60', 'SAO PAULO') +
+    additionalData +
+    '6304'
+  return payload + crc16(payload)
+}
+// ───────────────────────────────────────────────────────────────
 
 const styles = `
   @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Jost:wght@300;400;500&display=swap');
@@ -133,11 +173,11 @@ const styles = `
   }
 
   .gift-price {
-  font-size: 12px;
-  font-weight: 400;
-  color: var(--warm-brown);
-  margin-top: 4px;
-}
+    font-size: 12px;
+    font-weight: 400;
+    color: var(--warm-brown);
+    margin-top: 4px;
+  }
 
   .gift-card:hover:not(.chosen):not(.selected) {
     border-color: var(--taupe);
@@ -391,6 +431,141 @@ const styles = `
     40% { transform: translateY(-5px); }
   }
 
+  /* ── Modal ── */
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    padding: 1rem;
+  }
+
+  .modal-box {
+    background: white;
+    border: 1px solid var(--sand);
+    border-radius: 4px;
+    padding: 2rem;
+    max-width: 360px;
+    width: 100%;
+    text-align: center;
+  }
+
+  .modal-eyebrow {
+    font-size: 10px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--taupe);
+    margin-bottom: 8px;
+  }
+
+  .modal-gift-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 22px;
+    font-weight: 400;
+    color: var(--deep);
+    margin-bottom: 4px;
+  }
+
+  .modal-subtitle {
+    font-size: 13px;
+    color: var(--taupe);
+    font-weight: 300;
+    margin-bottom: 20px;
+  }
+
+  .modal-qr {
+    background: var(--cream);
+    border-radius: 4px;
+    padding: 12px;
+    display: inline-block;
+    margin-bottom: 4px;
+  }
+
+  .modal-price {
+    font-size: 24px;
+    font-weight: 500;
+    color: var(--deep);
+    margin: 12px 0 16px;
+  }
+
+  .modal-pix-row {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    background: var(--cream);
+    border: 1px solid var(--sand);
+    border-radius: 2px;
+    padding: 8px 12px;
+    margin-bottom: 20px;
+  }
+
+  .modal-pix-code {
+    font-size: 11px;
+    font-family: monospace;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    flex: 1;
+    color: var(--warm-brown);
+    text-align: left;
+  }
+
+  .modal-copy-btn {
+    font-size: 12px;
+    padding: 4px 10px;
+    border: 1px solid var(--sand);
+    border-radius: 2px;
+    background: white;
+    cursor: pointer;
+    flex-shrink: 0;
+    color: var(--deep);
+    font-family: 'Jost', sans-serif;
+    transition: background 0.15s;
+  }
+
+  .modal-copy-btn:hover { background: var(--sand); }
+
+  .modal-actions {
+    display: flex;
+    gap: 8px;
+  }
+
+  .modal-btn-secondary {
+    flex: 1;
+    padding: 12px;
+    border: 1px solid var(--sand);
+    border-radius: 2px;
+    background: transparent;
+    cursor: pointer;
+    font-size: 13px;
+    color: var(--taupe);
+    font-family: 'Jost', sans-serif;
+    transition: background 0.15s, color 0.15s;
+  }
+
+  .modal-btn-secondary:hover { background: var(--sand); color: var(--deep); }
+  .modal-btn-secondary:disabled { opacity: 0.5; cursor: not-allowed; }
+
+  .modal-btn-primary {
+    flex: 1;
+    padding: 12px;
+    border: none;
+    border-radius: 2px;
+    background: var(--deep);
+    cursor: pointer;
+    font-size: 13px;
+    color: var(--cream);
+    font-weight: 500;
+    font-family: 'Jost', sans-serif;
+    transition: background 0.15s;
+  }
+
+  .modal-btn-primary:hover { background: var(--warm-brown); }
+  .modal-btn-primary:disabled { background: var(--taupe); cursor: not-allowed; }
+
   @media (max-width: 600px) {
     .hero-title { font-size: 2rem; }
     .form-row { grid-template-columns: 1fr; }
@@ -404,7 +579,7 @@ const GIFT_ICONS = {
   almofada: '🛋️', vaso: '🌺', quadro: '🖼️', tapete: '🏠',
   ventilador: '🌀', liquidificador: '⚡', cafeteira: '☕',
   ferro: '👕', batedeira: '🥣', espelho: '🪞',
-  tv: '📺', micro: '📡', ar: '❄️', geladeira: '🧊',furadeira:'🛠️',mixer:'🥛'
+  tv: '📺', micro: '📡', ar: '❄️', geladeira: '🧊', furadeira: '🛠️', mixer: '🥛'
 }
 
 function getIcon(name = '') {
@@ -420,11 +595,7 @@ function getInitials(name = '') {
 }
 
 function Toast({ message, visible }) {
-  return (
-    <div className={`toast ${visible ? 'show' : ''}`}>
-      {message}
-    </div>
-  )
+  return <div className={`toast ${visible ? 'show' : ''}`}>{message}</div>
 }
 
 function LoadingDots() {
@@ -444,25 +615,31 @@ export default function App() {
   const [submitting, setSubmitting] = useState(false)
   const [toast, setToast] = useState({ visible: false, message: '' })
 
-    useEffect(() => {
-      document.title = "Lista Casamento | Gakel";
-    }, []);
+  // Modal Pix
+  const [pixModal, setPixModal] = useState(null) // { gift, nome, qrDataUrl, payload }
+  const [copied, setCopied] = useState(false)
 
-  async function fetchGifts() {
-    try {
-      const res = await fetch(`${API}/gifts`)
-      const json = await res.json()
-      setGifts(json || [])
-    } catch (e) { console.error(e) }
-  }
+  useEffect(() => {
+    document.title = 'Lista Casamento | Gakel'
+  }, [])
 
-  async function fetchUsers() {
-    try {
-      const res = await fetch(`${API}/users`)
-      const json = await res.json()
-      setUsers(json || [])
-    } catch (e) { console.error(e) }
-  }
+
+
+ async function fetchUsers() {
+  try {
+    const res = await fetch(`${API}/users`)
+    const json = await res.json()
+    setUsers(Array.isArray(json) ? json : json.rows ?? [])  // ✅
+  } catch (e) { console.error(e) }
+}
+
+async function fetchGifts() {
+  try {
+    const res = await fetch(`${API}/gifts`)
+    const json = await res.json()
+    setGifts(Array.isArray(json) ? json : json.rows ?? [])  // ✅
+  } catch (e) { console.error(e) }
+}
 
   useEffect(() => {
     Promise.all([fetchGifts(), fetchUsers()]).finally(() => setLoading(false))
@@ -473,25 +650,50 @@ export default function App() {
     setTimeout(() => setToast({ visible: false, message: '' }), 2800)
   }
 
+  // 1. Abre o modal — sem salvar nada ainda
   async function handleSubmit() {
     if (!name.trim() || !selectedGift || submitting) return
+
+    try {
+      const payload = buildPixPayload(PIX_CHAVE, PIX_NOME, selectedGift.price)
+      const qrDataUrl = await QRCode.toDataURL(payload, {
+        width: 200,
+        margin: 1,
+        color: { dark: '#3D2E1E', light: '#FAF8F4' }
+      })
+      setPixModal({ gift: selectedGift, nome: name.trim(), qrDataUrl, payload })
+    } catch (e) {
+      console.error(e)
+      showToast('Erro ao gerar QR Code. Tente novamente.')
+    }
+  }
+
+  // 2. Só salva quando o usuário clica em um dos botões do modal
+  async function confirmGift(tipo) {
+    if (!pixModal || submitting) return
     setSubmitting(true)
     try {
       await fetch(`${API}/users`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name: name.trim(), gift: selectedGift.giftname })
+        body: JSON.stringify({
+          name: pixModal.nome,
+          gift: pixModal.gift.giftname,
+          tipo // 'pix' | 'fisico'
+        })
       })
       await fetch(`${API}/gifts/select`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ id: selectedGift.id })
+        body: JSON.stringify({ id: pixModal.gift.id })
       })
+      setPixModal(null)
+      setCopied(false)
       setName('')
       setSelectedGift(null)
       await fetchGifts()
       await fetchUsers()
-      showToast('Presente confirmado! Muito obrigado ♡')
+      showToast(tipo === 'pix' ? 'Muito obrigado! ♡' : 'Presente reservado ♡')
     } catch (e) {
       console.error(e)
       showToast('Erro ao confirmar. Tente novamente.')
@@ -500,15 +702,11 @@ export default function App() {
     }
   }
 
-  async function removeUser(id) {
-    try {
-      const res = await fetch(`${API}/users/${id}`, { method: 'DELETE' })
-      if (res.status === 204 || res.ok) {
-        await fetchUsers()
-        await fetchGifts()
-        showToast('Removido com sucesso')
-      }
-    } catch (e) { console.error(e) }
+  function handleCopy() {
+    if (!pixModal) return
+    navigator.clipboard.writeText(pixModal.payload)
+    setCopied(true)
+    setTimeout(() => setCopied(false), 2000)
   }
 
   const canSubmit = name.trim() && selectedGift && !submitting
@@ -553,10 +751,10 @@ export default function App() {
                 <span className="gift-icon">{getIcon(g.giftname)}</span>
                 <div className="gift-name">{g.giftname}</div>
                 {g.price && (
-  <div className="gift-price">
-    {Number(g.price).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
-  </div>
-)}
+                  <div className="gift-price">
+                    {Number(g.price).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+                  </div>
+                )}
               </div>
             ))}
           </div>
@@ -610,14 +808,55 @@ export default function App() {
                     <span className="gifter-gift">{giftName}</span>
                   </div>
                 </div>
-                <button className="delete-btn" onClick={() => removeUser(u.id)} title="Remover">
-                  ×
-                </button>
+              
               </div>
             )
           })}
         </div>
       </main>
+
+      {/* ── Modal Pix ── */}
+      {pixModal && (
+        <div className="modal-overlay">
+          <div className="modal-box">
+            <p className="modal-eyebrow">Confirmar presente</p>
+            <p className="modal-gift-name">{pixModal.gift.giftname}</p>
+            <p className="modal-subtitle">Escaneie o QR Code ou copie o código Pix</p>
+
+            <div className="modal-qr">
+              <img src={pixModal.qrDataUrl} alt="QR Code Pix" width={200} height={200} />
+            </div>
+
+            <p className="modal-price">
+              {Number(pixModal.gift.price).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+            </p>
+
+            <div className="modal-pix-row">
+              <span className="modal-pix-code">{pixModal.payload}</span>
+              <button className="modal-copy-btn" onClick={handleCopy}>
+                {copied ? 'Copiado!' : 'Copiar'}
+              </button>
+            </div>
+
+            <div className="modal-actions">
+              <button
+                className="modal-btn-secondary"
+                onClick={() => confirmGift('fisico')}
+                disabled={submitting}
+              >
+                Vou levar físico
+              </button>
+              <button
+                className="modal-btn-primary"
+                onClick={() => confirmGift('pix')}
+                disabled={submitting}
+              >
+                {submitting ? '...' : 'Já paguei ✓'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       <Toast message={toast.message} visible={toast.visible} />
     </>
