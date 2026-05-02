@@ -567,6 +567,10 @@ function AdminPanel({ onLogout }) {
     setTimeout(() => setToast({ visible: false, message: '' }), 2800)
   }
 
+  useEffect(() => {
+    document.title = "Admin Casamento";
+  }, []);
+
   async function fetchAll() {
     try {
       const [gRes, uRes] = await Promise.all([

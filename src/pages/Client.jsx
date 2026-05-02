@@ -444,6 +444,10 @@ export default function App() {
   const [submitting, setSubmitting] = useState(false)
   const [toast, setToast] = useState({ visible: false, message: '' })
 
+    useEffect(() => {
+      document.title = "Lista Casamento | Gakel";
+    }, []);
+
   async function fetchGifts() {
     try {
       const res = await fetch(`${API}/gifts`)
