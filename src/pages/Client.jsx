@@ -451,6 +451,7 @@ const styles = `
     max-width: 360px;
     width: 100%;
     text-align: center;
+    position: relative;
   }
 
   .modal-eyebrow {
@@ -819,6 +820,21 @@ async function fetchGifts() {
       {pixModal && (
         <div className="modal-overlay">
           <div className="modal-box">
+            <button
+        onClick={() => setPixModal(null)}
+        style={{
+          position: 'absolute',
+          top: 12, right: 14,
+          background: 'none',
+          border: 'none',
+          fontSize: 20,
+          color: 'var(--taupe)',
+          cursor: 'pointer',
+          lineHeight: 1
+        }}
+      >
+        ×
+      </button>
             <p className="modal-eyebrow">Confirmar presente</p>
             <p className="modal-gift-name">{pixModal.gift.giftname}</p>
             <p className="modal-subtitle">Escaneie o QR Code ou copie o código Pix</p>
