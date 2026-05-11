@@ -4,12 +4,12 @@ import "./client.css"
 const API = 'https://api-gabiekel.up.railway.app'
 
 const GIFT_ICONS = {
-  jogo: '🍽️', faca: '🔪', panela: '🍳', frigideira: '🥘',
+   faca: '🔪', panela: '🍳', frigideira: '🥘',
   cama: '🛏️', toalha: '🛁', copo: '🥂', taça: '🍷',
   almofada: '🛋️', vaso: '🌺', quadro: '🖼️', tapete: '🏠',
   ventilador: '🌀', liquidificador: '⚡', cafeteira: '☕',
   ferro: '👕', batedeira: '🥣', espelho: '🪞',
-  tv: '📺', micro: '📡', ar: '❄️', geladeira: '🧊', furadeira: '🛠️', mixer: '🥛'
+  tv: '📺', micro: '📡', ar: '❄️', geladeira: '🧊', furadeira: '🛠️', mixer: '🥛', air:'♨️'
 }
 
 function getIcon(name = '') {
@@ -139,6 +139,7 @@ export default function App() {
       <main className="main">
         <div className="form-card">
           <p className="form-card-title">Escolha um presente</p>
+          <p className="instructions-card">Clique no presente que quiser dar e preencha com seu nome!</p>
           <p className="section-label">Presentes disponíveis</p>
 
           <div className="gifts-grid">
